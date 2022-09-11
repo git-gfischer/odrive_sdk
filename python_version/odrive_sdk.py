@@ -37,7 +37,7 @@ class Odrive_ctrl:
 
 		signal.signal(signal.SIGINT, self.exit_gracefully)
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=False,axis=0,reduction=1,cpr=8192):
+	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192):
 		motor = odrive.find_any()
 		self.mode=mode
         self.reduction=reduction

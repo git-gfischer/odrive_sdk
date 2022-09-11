@@ -8,7 +8,7 @@ def main():
 
     # Testing speed controller
     print("calibrating...")
-    odrv.setup(pos="speed", calibration=True)
+    odrv.setup(pos="speed")
     time.sleep(1)
     print("done calibration")
 
