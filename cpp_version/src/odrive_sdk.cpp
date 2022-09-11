@@ -1,6 +1,5 @@
 #include "odrive_sdk.h"
 
-
 Odrive_SDK::Odrive_SDK(std::string config_path)
 {
     std::cout<<"Importing Odrive settings... \n";

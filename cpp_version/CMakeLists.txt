@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Ofast -DNDEBUG")
 set(YAML_BUILD_SHARED_LIBS ON) # enable yaml
 
-
-
 # Python config 
 find_package(PythonLibs REQUIRED)
 if (NOT PythonLibs_FOUND)
@@ -74,7 +72,7 @@ target_link_libraries(Odrive_class /usr/lib/x86_64-linux-gnu/libpython3.8.so)
 target_link_libraries(Odrive_class ${YAMLCPP_LIBRARY})
 
 
-add_executable(odrive_test odrive_test.cpp)
-#target_link_libraries(odrive_test /usr/lib/x86_64-linux-gnu/libpython3.8.so)
-target_link_libraries(odrive_test Odrive_class)
+add_executable(odrive_speed examples/odrive_speed_test.cpp)
+#target_link_libraries(odrive_speed /usr/lib/x86_64-linux-gnu/libpython3.8.so)
+target_link_libraries(odrive_speed Odrive_class)
 
