@@ -37,11 +37,12 @@ class Odrive_ctrl:
 
 		signal.signal(signal.SIGINT, self.exit_gracefully)
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192):
+	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,version="0.5.4"):
 		motor = odrive.find_any()
 		self.mode=mode
         self.reduction=reduction
         self.cpr=cpr
+		self.version = version
 
 		if(axis==0): self.m=motor.axis0
 		elif(axis==1): self.m=motor.axis1
@@ -54,16 +55,22 @@ class Odrive_ctrl:
 			time.sleep(0.1)
 
 		if(mode=="speed"):
+			print("Speed Controller Selected")
 			self.m.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
 			self.m.controller.config.vel_ramp_rate = 0.5  
 			self.m.controller.config.vel_limit=250000
 			self.m.motor.config.current_lim = 50   
 		elif(mode=="torque"):
-			self.m.controller.config.control_mode= ControlMode.TORQUE_CONTROL
+			print("Torque Controller Selected")
+			if(self.version == "0.5.4"):
+				self.m.controller.config.control_mode= CONTROL_MODE_TORQUE_CONTROL
+			else:
+				self.m.controller.config.control_mode= ControlMode.TORQUE_CONTROL
 
 			self.m.motor.config.current_lim = 50
 			self.m.controller.config.vel_limit=250000
 		elif(mode=="pos"):
+			print("Position Controller Selected")
 			self.m.controller.config.vel_limit=250000
 			self.m.motor.config.current_lim = 50
 		else:
@@ -85,10 +92,10 @@ class Odrive_ctrl:
 	 	   
 			self.m.controller.config.vel_limit = speed_enc
 
-
-			#self.m.controller.pos_setpoint = pos_enc
-
-            self.m.controller.input_pos = pos_enc
+			if(self.version=="0.5.4"):
+				self.m.controller.pos_setpoint = pos_enc
+			else:
+            	self.m.controller.input_pos = pos_enc
 		else:
 			print("Odrive Error: Position control not configured")
 		
@@ -99,10 +106,10 @@ class Odrive_ctrl:
 			speed_conv = (self.cpr*vel*self.reduction)/60
 			# acceleration ramp
 
-			#self.m.controller.vel_setpoint= speed_conv  # turn/s
-
-
-            self.m.controller.input_vel = speed_conv
+			if(self.version == "0.5.4"):
+				self.m.controller.vel_setpoint= speed_conv  # turn/s
+			else:
+				self.m.controller.input_vel = speed_conv
 		else:
 			print("Odrive Error: Velocity control not configured")
 	#--------------------------------------------------------------
@@ -112,8 +119,9 @@ class Odrive_ctrl:
 			I=Torque*self.KV_rad/(8.27*self.reduction)
 			#print(str(I)+' A')
 
-			#self.m.controller.current_setpoint=I
-
-            self.m.controller.input_torque=I
+			if(self.version=="0.5.4"):
+				self.m.controller.current_setpoint=I
+			else:
+            	self.m.controller.input_torque=I
 		else:
 			print("Odrive Error: Torque control not configured")

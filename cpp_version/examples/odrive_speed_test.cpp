@@ -2,7 +2,7 @@
 //Title: odrive test
 //Date: 11/9/2022
 //Author: Fischer
-//Usage: ./odrive_test
+//Usage: ./odrive_speed_test
 //===============================
 
 #include "odrive_sdk.h"
