@@ -9,7 +9,7 @@
 #include <iostream>
 #include <string>
 
-#define CONFIG "config/config.yaml"
+#define CONFIG "../config/config.yaml"
 
 int main()
 {

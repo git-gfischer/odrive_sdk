@@ -40,8 +40,8 @@ class Odrive_ctrl:
 	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,version="0.5.4"):
 		motor = odrive.find_any()
 		self.mode=mode
-        self.reduction=reduction
-        self.cpr=cpr
+		self.reduction=reduction
+		self.cpr=cpr
 		self.version = version
 
 		if(axis==0): self.m=motor.axis0
@@ -75,8 +75,8 @@ class Odrive_ctrl:
 			self.m.motor.config.current_lim = 50
 		else:
 			print("Invalid Mode")
-            print("Avalable Modes are : pos, speed, torque")
-
+			print("Avalable Modes are : pos, speed, torque")
+		
 		self.m.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL    
 			#t0 = time.monotonic()
 			#torque = abs(motor.axis0.motor.current_control.Iq_measured)
@@ -95,7 +95,7 @@ class Odrive_ctrl:
 			if(self.version=="0.5.4"):
 				self.m.controller.pos_setpoint = pos_enc
 			else:
-            	self.m.controller.input_pos = pos_enc
+				self.m.controller.input_pos = pos_enc
 		else:
 			print("Odrive Error: Position control not configured")
 		
@@ -122,6 +122,6 @@ class Odrive_ctrl:
 			if(self.version=="0.5.4"):
 				self.m.controller.current_setpoint=I
 			else:
-            	self.m.controller.input_torque=I
+				self.m.controller.input_torque=I
 		else:
 			print("Odrive Error: Torque control not configured")

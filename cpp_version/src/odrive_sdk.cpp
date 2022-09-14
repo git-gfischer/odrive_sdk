@@ -7,7 +7,7 @@ Odrive_SDK::Odrive_SDK(std::string config_path)
     Import_Settings(config_path);
 
     Py_Initialize();
-
+    std::cout<<odrv_module_path.c_str()<<std::endl;
     this->odrv_module = PyImport_ImportModule(odrv_module_path.c_str()); //config_path.c_str()
     if (!py_check(this->odrv_module)) // check load py_Name 
     {
@@ -99,7 +99,8 @@ void Odrive_SDK::setup_env()
     pwd=pwd.erase(pwd.length()-5,pwd.length()); // erase "build" from path
 
     //setting automatic PYTHONPATH environment variable
-    std::string python_path = "PYTHONPATH=" + pwd + "../python_version/";
+    std::string python_path = "PYTHONPATH=" + pwd + "../python_version";
+    std::cout<<python_path<<std::endl;
     char * py_path = new char[python_path.size() + 1];
     std::copy(python_path.begin(), python_path.end(), py_path);
     py_path[python_path.size()] = '\0'; // don't forget the terminating 0
