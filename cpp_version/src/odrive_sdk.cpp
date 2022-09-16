@@ -136,9 +136,9 @@ void Odrive_SDK::PrintPyObject(PyObject *obj)
     std::cout<<s<<std::endl;
 }
 //=========================================================
-void Odrive_SDK::odrv_setup(std::string mode)
+void Odrive_SDK::odrv_setup(std::string mode="pos",bool calibration=true,int axis=0,float reduction=1.0,int cpr=8192,std::string version="0.5.4" )
 {
-    PyObject *pargs = Py_BuildValue("(s)",mode);
+    PyObject *pargs = Py_BuildValue("(sbifis)",mode,calibration,axis,reduction,cpr,version);
     PyObject *pValue = PyEval_CallObject(this->odrv_setup_obj,pargs);
     if(!py_check(pValue)) {std::cerr<<"Error:actionP did not excecute \n";}
 }
