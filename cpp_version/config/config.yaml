@@ -1,3 +1,3 @@
 'py_module': "odrive_sdk"
-'env_path' : "../../python_version"
+'env_path' : "../python_version/"
 'py_class' : "Odrive_ctrl" 

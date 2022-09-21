@@ -7,13 +7,14 @@ def main():
     odrv = Odrive_ctrl()
 
     # Testing speed controller
-    print("calibrating...")
-    odrv.setup(mode="speed")
+    odrv.setup(mode="torque",version="0.5.3")
     time.sleep(0.1)
-    print("done calibration")
+   
 
     speed= 150 # rpm
-    odrv.actionV(speed)
+    pos = 720
+    torque = 0.5
+    odrv.actionT(torque)
 
     # Keep the code running 
     while (True): pass

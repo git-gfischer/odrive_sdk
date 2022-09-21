@@ -99,8 +99,8 @@ void Odrive_SDK::setup_env()
     pwd=pwd.erase(pwd.length()-5,pwd.length()); // erase "build" from path
 
     //setting automatic PYTHONPATH environment variable
-    std::string python_path = "PYTHONPATH=" + pwd + "../python_version";
-    std::cout<<python_path<<std::endl;
+    std::string python_path = "PYTHONPATH=" + pwd + "../python_version/";
+    //std::cout<<python_path<<std::endl;
     char * py_path = new char[python_path.size() + 1];
     std::copy(python_path.begin(), python_path.end(), py_path);
     py_path[python_path.size()] = '\0'; // don't forget the terminating 0
@@ -136,30 +136,34 @@ void Odrive_SDK::PrintPyObject(PyObject *obj)
     std::cout<<s<<std::endl;
 }
 //=========================================================
-void Odrive_SDK::odrv_setup(std::string mode="pos",bool calibration=true,int axis=0,float reduction=1.0,int cpr=8192,std::string version="0.5.4" )
+void Odrive_SDK::odrv_setup(std::string mode,bool calibration,int axis,float reduction,int cpr,int KV,std::string version)
 {
-    PyObject *pargs = Py_BuildValue("(sbifis)",mode,calibration,axis,reduction,cpr,version);
+    PyObject *pargs = Py_BuildValue("(sbifiis)",mode.c_str(),calibration,axis,reduction,cpr,KV,version.c_str());
     PyObject *pValue = PyEval_CallObject(this->odrv_setup_obj,pargs);
-    if(!py_check(pValue)) {std::cerr<<"Error:actionP did not excecute \n";}
+    if(!py_check(pargs)) {std::cerr<<"Error:setup args has an error \n"; return; }
+    if(!py_check(pValue)) {std::cerr<<"Error:setup did not excecute \n"; return; }
 }
 //=========================================================
-void Odrive_SDK::odrv_actionP(float pos, float speed=150.0)
+void Odrive_SDK::odrv_actionP(double pos, double speed)
 {
-    PyObject *pargs = Py_BuildValue("(ff)",pos,speed);
-    PyObject *pValue = PyEval_CallObject(this->odrv_actionP_obj,pargs);
-    if(!py_check(pValue)) {std::cerr<<"Error:actionP did not excecute \n";}
+    PyObject *pargs = Py_BuildValue("(dd)",pos,speed);
+    PyObject *actionP_Value = PyEval_CallObject(this->odrv_actionP_obj,pargs);
+    if(!py_check(pargs)) {std::cerr<<"Error:actionP args has an error \n";        return;} 
+    if(!py_check(actionP_Value)) {std::cerr<<"Error:actionP did not excecute \n"; return;}
 }
 //=========================================================
-void Odrive_SDK::odrv_actionV(float speed)
+void Odrive_SDK::odrv_actionV(double speed)
 {
-    PyObject *pargs = Py_BuildValue("(f)",speed);
-    PyObject *pValue = PyEval_CallObject(this->odrv_actionV_obj,pargs);
-    if(!py_check(pValue)) {std::cerr<<"Error:actionV did not excecute \n";}
+    PyObject *pargs = Py_BuildValue("(d)",speed);
+    PyObject *actionV_Value = PyEval_CallObject(this->odrv_actionV_obj,pargs);
+    if(!py_check(pargs)) {std::cerr<<"Error:actionV args has an error \n"; return;}
+    if(!py_check(actionV_Value)) {std::cerr<<"Error:actionV did not excecute \n"; return;}
 }
 //=========================================================
-void Odrive_SDK::odrv_actionT(float torque)
+void Odrive_SDK::odrv_actionT(double torque)
 {
-    PyObject *pargs = Py_BuildValue("(f)",torque);
-    PyObject *pValue = PyEval_CallObject(this->odrv_actionT_obj,pargs);
-    if(!py_check(pValue)) {std::cerr<<"Error:actionT did not excecute \n";}
+    PyObject *pargs = Py_BuildValue("(d)",torque);
+    PyObject *actionT_Value = PyEval_CallObject(this->odrv_actionT_obj,pargs);
+    if(!py_check(pargs)) {std::cerr<<"Error:actionT args has an error \n"; return;}
+    if(!py_check(actionT_Value)) {std::cerr<<"Error:actionT did not excecute \n"; return;}
 }

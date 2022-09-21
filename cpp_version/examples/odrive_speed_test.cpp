@@ -18,10 +18,18 @@ int main()
     odrv = new Odrive_SDK(CONFIG);
 
     //setup
-    odrv->odrv_setup("speed");
-
-    float speed = 150.0; //rpm
-    odrv->odrv_actionV(speed);
+    std::string mode = "torque";
+    int axis = 0;
+    bool calibration = true;
+    float reduction = 1.0;
+    std::string version = "0.5.3";
+    int cpr = 8192;
+    int KV = 150;
+    odrv->odrv_setup(mode,calibration,axis,reduction,cpr,KV,version);
+    
+    double speed = 150.0; //rpm
+    double pos = 720; //rpm
+    odrv->odrv_actionT(0.1);
 
     std::cout<<"done \n";
     return 0;

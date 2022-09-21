@@ -19,11 +19,11 @@ class Odrive_SDK
         Odrive_SDK(std::string config_file);
         ~Odrive_SDK();
 
-        void odrv_actionP(float pos, float speed);
-        void odrv_actionV(float speed);
-        void odrv_actionT(float torque);
-        void odrv_setup(std::string mode);
-    
+        void odrv_actionP(double pos, double speed);
+        void odrv_actionV(double speed);
+        void odrv_actionT(double torque);
+        void odrv_setup(std::string mode,bool calibration,int axis,float reduction,int cpr,int KV,std::string version);
+
     private:
         PyObject *odrv_module;
         PyObject *odrv_class;
