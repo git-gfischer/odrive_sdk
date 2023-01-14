@@ -9,6 +9,8 @@
 #include <vector>
 #include <cstdio>
 #include <yaml-cpp/yaml.h>
+#include <limits>
+
 
 //#include <boost/thread.hpp>
 //#include "include/Conversion.h"
@@ -22,7 +24,9 @@ class Odrive_SDK
         void odrv_actionP(double pos, double speed);
         void odrv_actionV(double speed);
         void odrv_actionT(double torque);
-        void odrv_setup(std::string mode,bool calibration,int axis,float reduction,int cpr,int KV,std::string version);
+        void odrv_setup(std::string mode,bool calibration,int axis,float reduction,int cpr,int KV,std::string version,std::string serial);
+        double odrv_get_encoder_pos();
+        double odrv_get_encoder_vel();
 
     private:
         PyObject *odrv_module;
@@ -32,6 +36,8 @@ class Odrive_SDK
         PyObject *odrv_actionP_obj;
         PyObject *odrv_actionV_obj;
         PyObject *odrv_actionT_obj;
+        PyObject *odrv_encoder_pos_obj;
+        PyObject *odrv_encoder_vel_obj;
 
         std::string odrv_module_path;
         std::string odrv_class_path;
@@ -42,5 +48,4 @@ class Odrive_SDK
         void PrintPyObject(PyObject *obj);
         void Import_Settings(std::string config_file);
 
-        
 };

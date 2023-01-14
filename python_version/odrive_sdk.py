@@ -19,7 +19,8 @@ class Odrive_ctrl:
 		self.original_sigint = signal.getsignal(signal.SIGINT)
 		signal.signal(signal.SIGINT, self.exit_gracefully)
 		self.KV_rad=28.27 #rad/Vs
-		self.vel_max=250000
+		self.vel_max=250000  # turn/s
+		self.current_max = 60 # Ampers
 	#----------------------------------------------------------
 	def exit_gracefully(self,signum, frame):
 		signal.signal(signal.SIGINT, self.original_sigint)
@@ -35,21 +36,25 @@ class Odrive_ctrl:
 
 		signal.signal(signal.SIGINT, self.exit_gracefully)
 	#----------------------------------------------------------
-	def setup_cpp(self,mode,calibration,axis,reduction,cpr,KV,version):
+	def setup_cpp(self,mode,calibration,axis,reduction,cpr,KV,version,serial):
 		print("setup_cpp")
-		motor = odrive.find_any()
-		self.mode=mode
+		motor = odrive.find_any(serial_number = serial)
+		self.mode=modemt_max
 		self.reduction=reduction
 		self.cpr=cpr
 		self.version = version
 		self.KV=KV #RPM/V
 
+		if(serial == " "):
+			print("Error: Please input odrive serial string, check under odrivetool command")
+			return 
+
 		if(axis==0):   self.m = motor.axis0
 		elif(axis==1): self.m = motor.axis1
 
-		self.m.motor.config.current_lim = 60
+		self.m.motor.config.current_lim = self.current_max
 
-		self.m.controller.config.vel_limit = 25000
+		self.m.controller.config.vel_limit = self.vel_max
 
 		self.m.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT
 
@@ -89,20 +94,25 @@ class Odrive_ctrl:
 			#torque = abs(motor.axis0.motor.current_control.Iq_measured)
 			#print('odrive setup was sucessful')
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150,version="0.5.4"):
-		motor = odrive.find_any()
+	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150,version="0.5.4", serial = " "):
+		motor = odrive.find_any(serial_number = serial)
+		self.motor = motor
 		self.mode=mode
 		self.reduction=reduction
 		self.cpr=cpr
 		self.version = version
 		self.KV=KV #RPM/V
 
+		if(serial==" "):
+			print("Error: Please input odrive serial string, check under odrivetool command")
+			return 
+
 		if(axis==0):   self.m = motor.axis0
 		elif(axis==1): self.m = motor.axis1
 
-		self.m.motor.config.current_lim = 60
+		self.m.motor.config.current_lim = self.current_max
 
-		self.m.controller.config.vel_limit = 25000
+		self.m.controller.config.vel_limit = self.vel_max
 
 		self.m.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT
 
@@ -143,14 +153,16 @@ class Odrive_ctrl:
 			#print('odrive setup was sucessful')
 	#--------------------------------------------------------------
 	def actionP(self,pos,vel=150): # position control	   
-		# [Input]: pos in degree
-		#          vel in RPM
+		# [Input]: pos in rad
+		#          vel in Rad/s
 		if(self.mode=="pos"):
-			pos_enc=pos*self.cpr*self.reduction/360 #Input Angular #TODO: 
-			speed_enc= (vel*self.cpr*self.reduction)/60 #Input RPM   #TODO:
+			pos_enc=float(pos*self.reduction/(2*3.14)) # rad to turn conversion 
+			print(pos_enc)
+			speed_enc=float((vel*self.reduction)/(2*3.14)) # rad/s to turn/s conversion
+			print(speed_enc)
 			if speed_enc>self.vel_max: speed_enc=self.vel_max
 	 	   
-			self.m.controller.config.vel_limit = speed_enc
+			#self.m.controller.config.vel_limit = speed_enc
 
 			if(self.version=="0.5.3"):
 				self.m.controller.pos_setpoint = pos_enc
@@ -162,8 +174,8 @@ class Odrive_ctrl:
 	#--------------------------------------------------------------
 	def actionV(self,vel): # velocity control
 		if(self.mode=="speed"):
-			#[Input]: vel in RPM
-			speed_conv = (self.cpr*vel*self.reduction)/60 
+			#[Input]: vel in Rad/s
+			speed_conv = (vel*self.reduction)/(2*3.14) # rad/s to turn/s conversion
 			# acceleration ramp
 
 			if(self.version == "0.5.3"):
@@ -184,6 +196,23 @@ class Odrive_ctrl:
 				self.m.controller.current_setpoint=I
 			elif(self.version == "0.5.4"):
 				self.m.controller.input_torque=I
-			
 		else:
 			print("Odrive Error: Torque control not configured")
+	#--------------------------------------------------------------
+	def set_dc_max_negative_current(self,current=-10.0):
+		self.motor.config.dc_max_negative_current = current
+	#--------------------------------------------------------------
+	def get_encoder_position(self,unit="rad"):
+		pos = float(self.m.encoder.pos_estimate)
+		if(unit=="rad"):      pos = (pos*2*math.pi)/self.reduction
+		elif(unit=="degree"): pos = (pos*360)/self.reduction
+		else: return None
+		return pos 
+	#--------------------------------------------------------------
+	def get_encoder_speed(self,unit="rad/s"):
+		speed = float(self.m.encoder.vel_estimate)
+		if(unit=="rad/s"):   speed = (speed*2*math.pi)/self.reduction
+		elif(unit=="rpm"):   speed = (speed*60)/self.reduction
+		elif(unit=="hertz"): speed = speed / self.reduction
+		else: return None
+		return speed 

@@ -1,5 +1,6 @@
 from odrive_sdk import Odrive_ctrl
 import time
+import math
 
 def main():
     print("Testing odrive...")
@@ -7,14 +8,17 @@ def main():
     odrv = Odrive_ctrl()
 
     # Testing speed controller
-    odrv.setup(mode="torque",version="0.5.3")
+    odrv.setup(mode="pos",reduction = 17 ,version="0.5.4", serial = "207C378A3548")
+    odrv.set_dc_max_negative_current(-10.0)
     time.sleep(0.1)
    
-
-    speed= 150 # rpm
-    pos = 720
-    torque = 0.5
-    odrv.actionT(torque)
+    speed= 10.0 # rad/s 
+    pos = 17.0
+    print(f"pos {pos}")
+    p = odrv.get_encoder_position()
+    print(f"res {p}")
+    #odrv.actionP(pos,speed)
+    #odrv.actionV(speed)
 
     # Keep the code running 
     while (True): pass

@@ -63,6 +63,20 @@ Odrive_SDK::Odrive_SDK(std::string config_path)
             return;
         }
 
+        this->odrv_encoder_pos_obj =  PyObject_GetAttrString(this->odrv_instance, (char*)"get_encoder_position"); 
+        if (!py_check(this->odrv_encoder_pos_obj)) // check load py_method
+        {
+            py_error("python error: Cannot load get_encoder_position method");
+            return;
+        }
+
+        this->odrv_encoder_vel_obj =  PyObject_GetAttrString(this->odrv_instance, (char*)"get_encoder_speed"); 
+        if (!py_check(this->odrv_encoder_vel_obj)) // check load py_method
+        {
+            py_error("python error: Cannot load get_encoder_speed method");
+            return;
+        }
+
         std::cout<<"odrive Ready" <<std::endl;
 
     }
@@ -83,8 +97,11 @@ Odrive_SDK::~Odrive_SDK()
     delete this->odrv_actionP_obj;
     delete this->odrv_actionV_obj;
     delete this->odrv_actionT_obj;
+    delete this->odrv_encoder_pos_obj;
+    delete  this->odrv_encoder_vel_obj;
     Py_Finalize();
 }
+
 //====================================
 void Odrive_SDK::setup_env()
 {
@@ -136,9 +153,9 @@ void Odrive_SDK::PrintPyObject(PyObject *obj)
     std::cout<<s<<std::endl;
 }
 //=========================================================
-void Odrive_SDK::odrv_setup(std::string mode,bool calibration,int axis,float reduction,int cpr,int KV,std::string version)
+void Odrive_SDK::odrv_setup(std::string mode,bool calibration,int axis,float reduction,int cpr,int KV,std::string version, std::string serial)
 {
-    PyObject *pargs = Py_BuildValue("(sbifiis)",mode.c_str(),calibration,axis,reduction,cpr,KV,version.c_str());
+    PyObject *pargs = Py_BuildValue("(sbifiiss)",mode.c_str(),calibration,axis,reduction,cpr,KV,version.c_str(),serial.c_str());
     PyObject *pValue = PyEval_CallObject(this->odrv_setup_obj,pargs);
     if(!py_check(pargs)) {std::cerr<<"Error:setup args has an error \n"; return; }
     if(!py_check(pValue)) {std::cerr<<"Error:setup did not excecute \n"; return; }
@@ -166,4 +183,27 @@ void Odrive_SDK::odrv_actionT(double torque)
     PyObject *actionT_Value = PyEval_CallObject(this->odrv_actionT_obj,pargs);
     if(!py_check(pargs)) {std::cerr<<"Error:actionT args has an error \n"; return;}
     if(!py_check(actionT_Value)) {std::cerr<<"Error:actionT did not excecute \n"; return;}
+}
+//=========================================================
+double Odrive_SDK::odrv_get_encoder_pos()
+{
+    PyObject *encoder_pos_Value = PyEval_CallObject(this->odrv_encoder_pos_obj,NULL);
+
+    if(!py_check(encoder_pos_Value)) 
+    {
+        std::cerr<<"Error:get_encoder_pos did not excecute \n"; 
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+    return PyFloat_AsDouble(encoder_pos_Value);
+}
+//=========================================================
+double Odrive_SDK::odrv_get_encoder_vel()
+{
+    PyObject *encoder_vel_Value = PyEval_CallObject(this->odrv_encoder_vel_obj,NULL);
+    if(!py_check(encoder_vel_Value)) 
+    {
+        std::cerr<<"Error:get_encoder_vel did not excecute \n"; 
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+    return PyFloat_AsDouble(encoder_vel_Value);
 }
