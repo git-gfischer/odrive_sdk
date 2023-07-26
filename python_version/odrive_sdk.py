@@ -3,6 +3,7 @@ from odrive.enums import *
 import numpy as np
 import sys,tty,termios,time
 import math 
+from odrive.utils import *
 
 import signal
 
@@ -19,8 +20,8 @@ class Odrive_ctrl:
 		self.original_sigint = signal.getsignal(signal.SIGINT)
 		signal.signal(signal.SIGINT, self.exit_gracefully)
 		self.KV_rad=28.27 #rad/Vs
-		self.vel_max=250000  # turn/s
-		self.current_max = 60 # Ampers
+		self.vel_max=25000  # turn/s
+		self.current_max = 180 # Ampers
 	#----------------------------------------------------------
 	def exit_gracefully(self,signum, frame):
 		signal.signal(signal.SIGINT, self.original_sigint)
@@ -39,7 +40,8 @@ class Odrive_ctrl:
 	def setup_cpp(self,mode,calibration,axis,reduction,cpr,KV,version,serial):
 		print("setup_cpp")
 		motor = odrive.find_any(serial_number = serial)
-		self.mode=modemt_max
+		self.odrv = motor
+		self.mode=mode
 		self.reduction=reduction
 		self.cpr=cpr
 		self.version = version
@@ -168,6 +170,8 @@ class Odrive_ctrl:
 				self.m.controller.pos_setpoint = pos_enc
 			elif(self.version =="0.5.4"):
 				self.m.controller.input_pos = pos_enc
+
+			self.dump_error()
 		else:
 			print("Odrive Error: Position control not configured")
 		
@@ -182,6 +186,8 @@ class Odrive_ctrl:
 				self.m.controller.vel_setpoint= speed_conv  # turn/s
 			elif(self.version=="0.5.4"):
 				self.m.controller.input_vel = speed_conv # turn/s 
+
+			self.dump_error()
 		else:
 			print("Odrive Error: Velocity control not configured")
 	#--------------------------------------------------------------
@@ -202,6 +208,9 @@ class Odrive_ctrl:
 	def set_dc_max_negative_current(self,current=-10.0):
 		self.motor.config.dc_max_negative_current = current
 	#--------------------------------------------------------------
+	def set_max_regen_current(self,current=10.0):
+		self.motor.config.max_regen_current = current
+	#--------------------------------------------------------------
 	def get_encoder_position(self,unit="rad"):
 		pos = float(self.m.encoder.pos_estimate)
 		if(unit=="rad"):      pos = (pos*2*math.pi)/self.reduction
@@ -216,3 +225,10 @@ class Odrive_ctrl:
 		elif(unit=="hertz"): speed = speed / self.reduction
 		else: return None
 		return speed 
+	#----------------------------------------------------------------
+	def dump_error(self):
+		dump_errors(self.motor)
+	#----------------------------------------------------------------
+	def get_dbus_voltage(self):
+		return self.motor.vbus_voltage
+	
