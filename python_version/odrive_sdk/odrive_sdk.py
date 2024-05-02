@@ -21,6 +21,7 @@ class Odrive_ctrl:
 		signal.signal(signal.SIGINT, self.exit_gracefully)
 
 		version = int(version.replace(".",""))
+		self.mode = mode
 		if(version==53):
 			self.odrv = Odrive_v53()
 			self.odrv.setup(mode, calibration, axis, reduction, cpr, KV, serial)
