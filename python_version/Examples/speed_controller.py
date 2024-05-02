@@ -4,7 +4,7 @@
 import sys
 import argparse
 sys.path.insert(0,"..")
-from odrive_sdk import Odrive_ctrl
+from odrive_sdk.odrive_sdk import Odrive_ctrl
 
 def main():
     # parse command line
