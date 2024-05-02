@@ -13,7 +13,7 @@ def main():
     parser.add_argument('--KV', type=int, default=150, help='motor KV')
     parser.add_argument('--reduction', type=int, default=1, help='motor gear box reduction')
     parser.add_argument('--axis', type=int, default=0, help='motor axis')
-    parser.add_argument('--Nocalibration',action_store = "false", help='Dont calibrate the motor')
+    parser.add_argument('--Nocalibration',action = "store_false", help='Dont calibrate the motor')
     parser.add_argument('--cpr', type=int, default=8192, help='encoder counts per revolutions')
     parser.add_argument('--serial', type=str, default="", help='odrive serial number')
     parser.add_argument('--setpoint', type=float, required=True, help='torque setpoint in N/m')
