@@ -1,5 +1,5 @@
 #=======================================================
-# Usage: python3 pos_controller.py --setpoint [float] --serial [str][optional] --reduction [float][optional] --axis [int][optional] --cpr [int][optional] --KV [int][optional]
+# Usage: python3 torque_controller.py --setpoint [float] --serial [str][optional] --reduction [float][optional] --axis [int][optional] --cpr [int][optional] --KV [int][optional]
 #=======================================================
 import sys
 import argparse
