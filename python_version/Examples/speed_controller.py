@@ -21,7 +21,7 @@ def main():
 
     print("test odrive speed control")
 
-    odrv = odrive_sdk("speed",args.Nocalibration,args.axis,args.reduction,args.cpr,args.KV,args.version,args.serial)
+    odrv = Odrive_ctrl("speed",args.Nocalibration,args.axis,args.reduction,args.cpr,args.KV,args.version,args.serial)
     odrv.speed_controller(args.setpoint)
 
     print("done")

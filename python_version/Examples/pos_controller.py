@@ -22,7 +22,7 @@ def main():
 
     print("test odrive postion control")
 
-    odrv = odrive_sdk("pos",args.Nocalibration,args.axis,args.reduction,args.cpr,args.KV,args.version,args.serial)
+    odrv = Odrive_ctrl("pos",args.Nocalibration,args.axis,args.reduction,args.cpr,args.KV,args.version,args.serial)
     odrv.pos_controller(args.setpoint)
 
     print("done")
