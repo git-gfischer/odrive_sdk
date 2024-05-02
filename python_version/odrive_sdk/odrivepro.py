@@ -108,10 +108,10 @@ class Odrive_pro:
 		print("done calibration")
 
 		#enable encoder
-        self.motor.inc_encoder0.config.cpr= self.cpr
-        self.motor.inc_encoder0.config.enabled=True
-        self.m.config.load_encoder= EncoderId.INC_ENCODER0
-        self.m.config.commutation_encoder = EncoderId.INC_ENCODER0
+		self.motor.inc_encoder0.config.cpr= self.cpr
+		self.motor.inc_encoder0.config.enabled=True
+		self.m.config.load_encoder= EncoderId.INC_ENCODER0
+		self.m.config.commutation_encoder = EncoderId.INC_ENCODER0
 	
 
 		if(mode=="speed"):
@@ -127,8 +127,8 @@ class Odrive_pro:
 			print("Avalable Modes are : pos, speed, torque")
 		
 
-        self.m.motor.config.torque_constant = 8.23 / self.KV
-        self.m.requested_state = AxisState.CLOSED_LOOP_CONTROL
+		self.m.motor.config.torque_constant = 8.23 / self.KV
+		self.m.requested_state = AxisState.CLOSED_LOOP_CONTROL
 
 			#t0 = time.monotonic()
 			#torque = abs(motor.axis0.motor.current_control.Iq_measured)

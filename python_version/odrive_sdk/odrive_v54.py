@@ -113,17 +113,17 @@ class Odrive_v54:
 
 		if(mode=="speed"):
 			print("Speed Controller Selected")
-            self.m.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
-            self.m.controller.config.vel_ramp_rate = 0.5 
+			self.m.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
+			self.m.controller.config.vel_ramp_rate = 0.5 
 		elif(mode=="torque"):
 			print("Torque Controller Selected")
-            #self.m.controller.config.control_mode= ControlMode.TORQUE_CONTROL
-            self.m.motor.config.torque_constant = 8.23 / self.KV
-            self.m.controller.config.control_mode= CONTROL_MODE_TORQUE_CONTROL
+			#self.m.controller.config.control_mode= ControlMode.TORQUE_CONTROL
+			self.m.motor.config.torque_constant = 8.23 / self.KV
+			self.m.controller.config.control_mode= CONTROL_MODE_TORQUE_CONTROL
 		elif(mode=="pos"):
 			print("Position Controller Selected")
-            self.m.controller.config.input_filter_bandwidth = 2.0
-            self.m.controller.config.input_mode = INPUT_MODE_POS_FILTER
+			self.m.controller.config.input_filter_bandwidth = 2.0
+			self.m.controller.config.input_mode = INPUT_MODE_POS_FILTER
 		else:
 			print("Invalid Mode")
 			print("Avalable Modes are : pos, speed, torque")
