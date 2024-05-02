@@ -21,7 +21,6 @@ def main():
     args = parser.parse_args()
 
     print("test odrive postion control")
-
     odrv = Odrive_ctrl("pos",args.Nocalibration,args.axis,args.reduction,args.cpr,args.KV,args.version,args.serial)
     odrv.pos_controller(args.setpoint)
 

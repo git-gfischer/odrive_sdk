@@ -88,8 +88,8 @@ class Odrive_v53:
 			print("Error: Please input odrive serial string, check under odrivetool command")
 			return 
 
-		if(axis==0):   self.m = motor.axis0
-		elif(axis==1): self.m = motor.axis1
+		if(axis==0):   self.m = self.motor.axis0
+		elif(axis==1): self.m = self.motor.axis1
 
 		self.m.motor.config.current_lim = self.current_max
 

@@ -91,7 +91,7 @@ class Odrive_pro:
 			print("Error: Please input odrive serial string, check under odrivetool command")
 			return 
 
-		self.m = motor.axis0
+		self.m = self.motor.axis0
 
 		self.m.motor.config.current_lim = self.current_max
 
