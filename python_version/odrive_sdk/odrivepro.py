@@ -97,11 +97,11 @@ class Odrive_pro:
 
 		self.m.controller.config.vel_limit = self.vel_max
 		
-		self.m.motor.config.motor_type = MotorType.HIGH_CURRENT
+		self.m.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT
 
 		if(calibration):
 			print("Calibrating...")
-			self.m.requested_state = AxisState.MOTOR_CALIBRATION
+			self.m.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 			time.sleep(1)
 		while self.m.current_state != AXIS_STATE_IDLE:
 			time.sleep(0.1)
@@ -116,10 +116,10 @@ class Odrive_pro:
 
 		if(mode=="speed"):
 			print("Speed Controller Selected")
-			self.m.controller.config.control_mode =  ControlMode.VELOCITY_CONTROL
+			self.m.controller.config.control_mode =  CONTROL_MODE_VELOCITY_CONTROL
 		elif(mode=="torque"):
 			print("Torque Controller Selected")
-			self.m.controller.config.control_mode = ControlMode.TORQUE_CONTROL
+			self.m.controller.config.control_mode = CONTROL_MODE_TORQUE_CONTROL
 		elif(mode=="pos"):
 			print("Position Controller Selected")
 		else:
@@ -128,7 +128,7 @@ class Odrive_pro:
 		
 
 		self.m.motor.config.torque_constant = 8.23 / self.KV
-		self.m.requested_state = AxisState.CLOSED_LOOP_CONTROL
+		self.m.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
 			#t0 = time.monotonic()
 			#torque = abs(motor.axis0.motor.current_control.Iq_measured)
