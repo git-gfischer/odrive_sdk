@@ -17,8 +17,8 @@ import signal
 class Odrive_pro:
 	def __init__(self):
 		#self.KV_rad=28.27 #rad/Vs
-		self.vel_max=25000  # turn/s
-		self.current_max = 180 # Ampers
+		self.vel_max=10  # turn/s
+		self.current_max = 20 # Ampers
 	#----------------------------------------------------------
 	# def setup_cpp(self,mode,calibration,axis,reduction,cpr,KV,version,serial):
 	# 	print("setup_cpp")
@@ -79,7 +79,7 @@ class Odrive_pro:
 	# 		#torque = abs(motor.axis0.motor.current_control.Iq_measured)
 	# 		#print('odrive setup was sucessful')
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150, serial = " "):
+	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=270, serial = " "):
 		self.motor = odrive.find_any(serial_number = serial)
 		self.mode=mode
 		self.reduction=reduction
@@ -93,11 +93,11 @@ class Odrive_pro:
 
 		self.m = self.motor.axis0
 
-		self.m.motor.config.current_lim = self.current_max
+		self.m.config.motor.current_hard_max = self.current_max
 
 		self.m.controller.config.vel_limit = self.vel_max
 		
-		self.m.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT
+		self.m.config.motor.motor_type = MOTOR_TYPE_HIGH_CURRENT
 
 		if(calibration):
 			print("Calibrating...")
@@ -127,7 +127,7 @@ class Odrive_pro:
 			print("Avalable Modes are : pos, speed, torque")
 		
 
-		self.m.motor.config.torque_constant = 8.23 / self.KV
+		self.m.config.motor.torque_constant = 8.23 / self.KV
 		self.m.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
 			#t0 = time.monotonic()
@@ -138,9 +138,9 @@ class Odrive_pro:
 		# [Input]: pos in rad
 		#          vel in Rad/s
 		if(self.mode=="pos"):
-			pos_enc=float(pos*self.reduction/(2*3.14)) # rad to turn conversion 
+			pos_enc=float(pos*self.reduction/(2*math.pi)) # rad to turn conversion 
 			print(pos_enc)
-			speed_enc=float((vel*self.reduction)/(2*3.14)) # rad/s to turn/s conversion
+			speed_enc=float((vel*self.reduction)/(2*math.pi)) # rad/s to turn/s conversion
 			print(speed_enc)
 			if speed_enc>self.vel_max: speed_enc=self.vel_max
 	 	   
@@ -155,7 +155,7 @@ class Odrive_pro:
 	def speed_controller(self,vel): # velocity control
 		if(self.mode=="speed"):
 			#[Input]: vel in Rad/s
-			speed_conv = (vel*self.reduction)/(2*3.14) # rad/s to turn/s conversion
+			speed_conv = (vel*self.reduction)/(2*math.pi) # rad/s to turn/s conversion
 			# acceleration ramp
 			self.m.controller.input_vel = speed_conv # turn/s 
 
