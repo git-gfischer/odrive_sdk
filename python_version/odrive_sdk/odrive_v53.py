@@ -12,10 +12,16 @@ from odrive.utils import *
 #https://docs.odriverobotics.com/v/latest/manual/control.html#control-modes
 
 class Odrive_v53:
-	def __init__(self):
+	def __init__(self,serial):
 		#self.KV_rad=28.27 #rad/Vs
 		self.vel_max=25000  # turn/s
 		self.current_max = 180 # Ampers
+
+		if(serial==" "):
+			print("Error: Please input odrive serial string, check under odrivetool command")
+			return 
+
+		self.motor = odrive.find_any(serial_number = serial)
 	#----------------------------------------------------------
 	# def setup_cpp(self,mode,calibration,axis,reduction,cpr,KV,version,serial):
 	# 	print("setup_cpp")
@@ -76,20 +82,14 @@ class Odrive_v53:
 	# 		#torque = abs(motor.axis0.motor.current_control.Iq_measured)
 	# 		#print('odrive setup was sucessful')
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150, serial = " "):
-		self.motor = odrive.find_any(serial_number = serial)
+	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150):
 		self.mode=mode
 		self.reduction=reduction
 		self.cpr=cpr
 		self.KV=KV #RPM/V
 
-
-		if(serial==" "):
-			print("Error: Please input odrive serial string, check under odrivetool command")
-			return 
-
-		if(axis==0):   self.m = motor.axis0
-		elif(axis==1): self.m = motor.axis1
+		if(axis==0):   self.m = self.motor.axis0
+		elif(axis==1): self.m = self.motor.axis1
 
 		self.m.motor.config.current_lim = self.current_max
 

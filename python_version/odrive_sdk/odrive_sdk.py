@@ -16,21 +16,17 @@ from odrivepro import Odrive_pro
 
 
 class Odrive_ctrl:
-	def __init__(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150,version="0.6.8", serial = " "):
+	def __init__(self,version="0.6.8",serial = " "):
 		self.original_sigint = signal.getsignal(signal.SIGINT)
 		signal.signal(signal.SIGINT, self.exit_gracefully)
 
-		version = int(version.replace(".",""))
-		if(version==53):
-			self.odrv = Odrive_v53()
-			self.odrv.setup(mode, calibration, axis, reduction, cpr, KV, serial)
-		elif(version==54):
-			self.odrv = Odrive_v54() 
-			self.odrv.setup(mode, calibration, axis, reduction, cpr, KV, serial)
-		elif (version>= 60):
-			self.odrv = Odrive_pro()
-			self.odrv.setup(mode, calibration, axis, reduction, cpr, KV, serial)
-
+		self.version = int(version.replace(".",""))
+		if(self.version==53):     self.odrv = Odrive_v53(serial)
+		elif(self.version==54):   self.odrv = Odrive_v54(serial) 
+		elif (self.version>= 60): self.odrv = Odrive_pro(serial)
+	#----------------------------------------------------------
+	def setup(mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150):
+		self.odrv.setup(mode, calibration, axis, reduction, cpr, KV)
 	#----------------------------------------------------------
 	def exit_gracefully(self,signum, frame):
 		signal.signal(signal.SIGINT, self.original_sigint)
@@ -133,6 +129,27 @@ class Odrive_ctrl:
 	def set_thermistor(self,state:bool):
 		self.odrv.set_thermistor(state)
 	#----------------------------------------------------------------
+	def set_calibration_current(self,curr:float):
+		self.odrv.set_calibration_current(curr)
+	#----------------------------------------------------------------
+	def set_encoder_index_search(self,state:bool):
+		self.odrv.set_encoder_index_search(state)
+	#--------------------------------------------------------------
+	def set_motor_poles(self,poles:int):
+		self.odrv.set_motor_poles(poles)
+	#--------------------------------------------------------------
+	def set_vel_gain(self,gain:float):
+		self.odrv.set_vel_gain(gain)
+	#--------------------------------------------------------------
+	def set_vel_integrator_gain(self,gain:float):
+		self.odrv.set_vel_integrator_gain(gain)
+	#--------------------------------------------------------------
+	def set_pos_gain(self,gain:float):
+		self.odrv.set_pos_gain(gain)
+	#--------------------------------------------------------------
+	def set_dc_max_positive_current(self,current=15):
+		self.odrv.set_dc_max_positive_current(current)
+	#-------------------------------------------------------------
 	def get_dbus_voltage(self):
 		return self.odrv.get_vbus_voltage()
 	

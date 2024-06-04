@@ -15,10 +15,16 @@ import signal
 
 
 class Odrive_pro:
-	def __init__(self):
+	def __init__(self,serial= " "):
 		#self.KV_rad=28.27 #rad/Vs
-		self.vel_max=25000  # turn/s
-		self.current_max = 180 # Ampers
+		self.vel_max=10  # turn/s
+		self.current_max = 20 # Ampers
+
+		if(serial==" "):
+			print("Error: Please input odrive serial string, check under odrivetool command")
+			return 
+
+		self.motor = odrive.find_any(serial_number = serial) # odrv0
 	#----------------------------------------------------------
 	# def setup_cpp(self,mode,calibration,axis,reduction,cpr,KV,version,serial):
 	# 	print("setup_cpp")
@@ -79,19 +85,13 @@ class Odrive_pro:
 	# 		#torque = abs(motor.axis0.motor.current_control.Iq_measured)
 	# 		#print('odrive setup was sucessful')
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150, serial = " "):
-		self.motor = odrive.find_any(serial_number = serial)
+	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150):
 		self.mode=mode
 		self.reduction=reduction
 		self.cpr=cpr
 		self.KV=KV #RPM/V
 
-
-		if(serial==" "):
-			print("Error: Please input odrive serial string, check under odrivetool command")
-			return 
-
-		self.m = motor.axis0
+		self.m = self.motor.axis0 # odrv0.axis0
 
 		self.m.motor.config.current_lim = self.current_max
 
@@ -176,6 +176,9 @@ class Odrive_pro:
 	def set_dc_max_negative_current(self,current=-15.0):
 		self.motor.config.dc_max_negative_current = current
 	#--------------------------------------------------------------
+	def set_dc_max_positive_current(self,current=15):
+		self.motor.config.dc_max_positive_current = current
+	#--------------------------------------------------------------
 	def set_max_regen_current(self,current=10.0):
 		self.motor.config.max_regen_current = current
 	#--------------------------------------------------------------
@@ -190,6 +193,24 @@ class Odrive_pro:
 	#--------------------------------------------------------------
 	def set_thermistor(self,state:bool):
 		self.m.motor.motor_thermistor.config.enabled = state
+	#--------------------------------------------------------------
+	def set_encoder_index_search(self,state:bool):
+		self.m.startup_encoder_index_search = state
+	#--------------------------------------------------------------
+	def set_motor_poles(self,poles:int):
+		self.m.config.motor.pole_pairs = poles
+	#--------------------------------------------------------------
+	def set_vel_gain(self,gain:float):
+		self.m.controller.config.vel_gain=gain
+	#--------------------------------------------------------------
+	def set_vel_integrator_gain(self,gain:float):
+		self.m.controller.config.vel_integrator_gain = gain
+	#--------------------------------------------------------------
+	def set_pos_gain(self,gain:float):
+		self.m.controller.config.pos_gain = gain
+	#--------------------------------------------------------------
+	def set_calibration_current(self,curr=10.0):
+		self.m.config.motor.calibration_current=curr	
 	#--------------------------------------------------------------
 	def get_encoder_position(self,unit="rad"):
 		pos = float(self.m.encoder.pos_estimate)
