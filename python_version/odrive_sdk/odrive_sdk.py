@@ -3,9 +3,9 @@ import sys,tty,termios,time
 import math 
 
 import signal
-from odrive_v53 import Odrive_v53
-from odrive_v54 import Odrive_v54
-from odrivepro import Odrive_pro
+from odrive_sdk.odrive_v53 import Odrive_v53
+from odrive_sdk.odrive_v54 import Odrive_v54
+from odrive_sdk.odrivepro import Odrive_pro
 
 
 # references links

@@ -107,8 +107,8 @@ class Odrive_v53:
 
 		if(mode=="speed"):
 			print("Speed Controller Selected")
-            self.m.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
-            self.m.controller.config.vel_ramp_rate = 0.5 
+			self.m.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
+			self.m.controller.config.vel_ramp_rate = 0.5 
 		elif(mode=="torque"):
 			print("Torque Controller Selected")
 			#self.m.motor.config.torque_constant = 8.23 / self.KV
