@@ -17,7 +17,7 @@ def main():
     parser.add_argument('--Nocalibration',action= "store_false", help='Dont calibrate the motor')
     parser.add_argument('--cpr', type=int, default=20000, help='encoder counts per revolutions')
     parser.add_argument('--serial', type=str, default="", help='odrive serial number')
-    parser.add_argument('--setpoint', type=float, required=True, help='position setpoint in rad')
+    parser.add_argument('--setpoint', type=float, required=True, help='position setpoint in rad/s')
     args = parser.parse_args()
 
     print("test odrive postion control")
