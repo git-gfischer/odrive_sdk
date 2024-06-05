@@ -15,7 +15,7 @@ from odrive_sdk.odrivepro import Odrive_pro
 #https://docs.odriverobotics.com/v/latest/manual/control.html#control-modes
 
 
-class Odrive_ctrl:
+class odrive_ctrl:
 	def __init__(self,version="0.6.8",serial = " "):
 		self.original_sigint = signal.getsignal(signal.SIGINT)
 		signal.signal(signal.SIGINT, self.exit_gracefully)
