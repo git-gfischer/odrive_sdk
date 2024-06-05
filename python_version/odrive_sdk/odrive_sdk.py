@@ -25,7 +25,7 @@ class odrive_ctrl:
 		elif(self.version==54):   self.odrv = Odrive_v54(serial) 
 		elif (self.version>= 60): self.odrv = Odrive_pro(serial)
 	#----------------------------------------------------------
-	def setup(mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150):
+	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150):
 		self.odrv.setup(mode, calibration, axis, reduction, cpr, KV)
 	#----------------------------------------------------------
 	def exit_gracefully(self,signum, frame):
