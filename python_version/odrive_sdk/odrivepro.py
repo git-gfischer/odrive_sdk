@@ -25,6 +25,7 @@ class Odrive_pro:
 			return 
 
 		self.motor = odrive.find_any(serial_number = serial) # odrv0
+		self.m = self.motor.axis0 # odrv0.axis0
 	#----------------------------------------------------------
 	# def setup_cpp(self,mode,calibration,axis,reduction,cpr,KV,version,serial):
 	# 	print("setup_cpp")
@@ -91,7 +92,7 @@ class Odrive_pro:
 		self.cpr=cpr
 		self.KV=KV #RPM/V
 
-		self.m = self.motor.axis0 # odrv0.axis0
+		
 
 		self.m.config.motor.current_hard_max = self.current_max
 
