@@ -5,7 +5,7 @@
 import sys
 import argparse
 sys.path.insert(0,"..")
-from odrive_sdk.odrive_sdk import Odrive_ctrl
+from odrive_sdk.odrive_sdk import odrive_ctrl
 
 def main():
     # parse command line
@@ -22,7 +22,7 @@ def main():
 
     print("test odrive postion control")
 
-    odrv = odrive_sdk(version = args.version, serial = args.serial)
+    odrv = odrive_ctrl(version = args.version, serial = args.serial)
     odrv.setup (mode = "pos", 
                 calibration =args.Nocalibration,
                 axis =args.axis,
