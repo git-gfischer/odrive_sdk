@@ -15,8 +15,9 @@ import signal
 
 
 class Odrive_pro:
-	def __init__(self,serial= " "):
+	def __init__(self,axis=0, serial= " "):
 		#self.KV_rad=28.27 #rad/Vs
+		# axis is not used by odrivePro but it is used by older board versions
 		self.vel_max=10  # turn/s
 		self.current_max = 20 # Ampers
 
@@ -86,13 +87,11 @@ class Odrive_pro:
 	# 		#torque = abs(motor.axis0.motor.current_control.Iq_measured)
 	# 		#print('odrive setup was sucessful')
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150):
+	def setup(self,mode="pos",calibration=True, enc_calibration = False, reduction=1,cpr=8192,KV=150):
 		self.mode=mode
 		self.reduction=reduction
 		self.cpr=cpr
 		self.KV=KV #RPM/V
-
-		
 
 		self.m.config.motor.current_hard_max = self.current_max
 
@@ -106,13 +105,18 @@ class Odrive_pro:
 			time.sleep(1)
 		while self.m.current_state != AXIS_STATE_IDLE:
 			time.sleep(0.1)
-		print("done calibration")
+		if(calibration): print("done calibration")
 
 		#enable encoder
 		self.motor.inc_encoder0.config.cpr= self.cpr
 		self.motor.inc_encoder0.config.enabled=True
 		self.m.config.load_encoder= EncoderId.INC_ENCODER0
 		self.m.config.commutation_encoder = EncoderId.INC_ENCODER0
+
+		if(enc_calibration):
+			print("Calibrating encoder....")
+			self.m.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+			print("done calibrating encoder")
 	
 
 		if(mode=="speed"):
@@ -123,6 +127,7 @@ class Odrive_pro:
 			self.m.controller.config.control_mode = CONTROL_MODE_TORQUE_CONTROL
 		elif(mode=="pos"):
 			print("Position Controller Selected")
+			self.m.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
 		else:
 			print("Invalid Mode")
 			print("Avalable Modes are : pos, speed, torque")
@@ -233,4 +238,7 @@ class Odrive_pro:
 	#----------------------------------------------------------------
 	def get_dbus_voltage(self):
 		return self.motor.vbus_voltage
+	#----------------------------------------------------------------
+	def save_configuration(self):
+		self.motor.save_configuration()
 	

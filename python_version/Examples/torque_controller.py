@@ -1,4 +1,5 @@
 #=======================================================
+# Example for OdrivePro board
 # Usage: python3 torque_controller.py --setpoint [float] --serial [str][optional] --reduction [float][optional] --axis [int][optional] --cpr [int][optional] --KV [int][optional]
 #=======================================================
 import sys
@@ -14,6 +15,7 @@ def main():
     parser.add_argument('--reduction', type=int, default=1, help='motor gear box reduction')
     parser.add_argument('--axis', type=int, default=0, help='motor axis')
     parser.add_argument('--Nocalibration',action = "store_false", help='Dont calibrate the motor')
+    parser.add_argument('--Enc_calibration',action = "store_true", help='calibrate the encoder')
     parser.add_argument('--cpr', type=int, default=8192, help='encoder counts per revolutions')
     parser.add_argument('--serial', type=str, default="", help='odrive serial number')
     parser.add_argument('--setpoint', type=float, required=True, help='torque setpoint in N/m')
@@ -21,10 +23,10 @@ def main():
 
     print("test odrive speed control")
 
-    odrv = odrive_ctrl(version = args.version, serial = args.serial)
+    odrv = odrive_ctrl(axis = args.axis, version = args.version, serial = args.serial)
     odrv.setup(mode = "torque",
                calibration = args.Nocalibration,
-               axis = args.axis,
+               enc_calibration = args.Enc_calibration,
                reduction = args.reduction,
                cpr = args.cpr,
                KV = args.KV)

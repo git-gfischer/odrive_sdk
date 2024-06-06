@@ -1,4 +1,5 @@
 #=======================================================
+# Example for OdrivePro board
 # Usage: python3 custom_motor_torque_controller.py --setpoint [float] --serial [str][optional] --reduction [float][optional] --axis [int][optional] --cpr [int][optional] --KV [int][optional]
 #=======================================================
 
@@ -15,6 +16,7 @@ def main():
     parser.add_argument('--reduction', type=int, default=1, help='motor gear box reduction')
     parser.add_argument('--axis', type=int, default=0, help='motor axis')
     parser.add_argument('--Nocalibration',action = "store_false", help='Dont calibrate the motor')
+    parser.add_argument('--Enc_calibration',action = "store_true", help='calibrate the encoder')
     parser.add_argument('--cpr', type=int, default=20000, help='encoder counts per revolutions')
     parser.add_argument('--serial', type=str, default="", help='odrive serial number')
     parser.add_argument('--setpoint', type=float, required=True, help='position setpoint in rad')
@@ -23,7 +25,7 @@ def main():
     print("test odrive postion control")
 
     # setup for custom motor
-    odrv = odrive_ctrl(version = args.version, serial = args.serial)
+    odrv = odrive_ctrl(axis = args.axis, version = args.version, serial = args.serial)
     
     #configure custom motor 
     odrv.set_calibration_current(10.0)
@@ -33,11 +35,11 @@ def main():
     odrv.set_pos_gain(50)
     odrv.set_dc_max_negative_current(-15)
     odrv.set_dc_max_positive_current(30) 
-    odrv.set_encoder_index_search(True)
+    #odrv.set_encoder_index_search(True)
 
     odrv.setup(mode = "torque",
                calibration = args.Nocalibration,
-               axis = args.axis,
+               enc_calibration = args.enc_calibration,
                reduction = args.reduction,
                cpr = args.cpr,
                KV = args.KV)

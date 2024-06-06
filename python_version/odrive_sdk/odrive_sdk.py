@@ -16,17 +16,17 @@ from odrive_sdk.odrivepro import Odrive_pro
 
 
 class odrive_ctrl:
-	def __init__(self,version="0.6.8",serial = " "):
+	def __init__(self,axis=0, version="0.6.8",serial = " "):
 		self.original_sigint = signal.getsignal(signal.SIGINT)
 		signal.signal(signal.SIGINT, self.exit_gracefully)
 
 		self.version = int(version.replace(".",""))
-		if(self.version==53):     self.odrv = Odrive_v53(serial)
-		elif(self.version==54):   self.odrv = Odrive_v54(serial) 
-		elif (self.version>= 60): self.odrv = Odrive_pro(serial)
+		if(self.version==53):     self.odrv = Odrive_v53(axis, serial)
+		elif(self.version==54):   self.odrv = Odrive_v54(axis, serial) 
+		elif (self.version>= 60): self.odrv = Odrive_pro(axis, serial)
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150):
-		self.odrv.setup(mode, calibration, axis, reduction, cpr, KV)
+	def setup(self,mode="pos",calibration=True,enc_calibration = False, reduction=1,cpr=8192,KV=150):
+		self.odrv.setup(mode, calibration, enc_calibration, reduction, cpr, KV)
 	#----------------------------------------------------------
 	def exit_gracefully(self,signum, frame):
 		signal.signal(signal.SIGINT, self.original_sigint)
@@ -152,4 +152,6 @@ class odrive_ctrl:
 	#-------------------------------------------------------------
 	def get_dbus_voltage(self):
 		return self.odrv.get_vbus_voltage()
-	
+	#-------------------------------------------------------------
+	def save_configuration(self):
+		self.odrv.save_configuration()	

@@ -22,7 +22,7 @@ import signal
 #==================================================
 
 class Odrive_v54:
-	def __init__(self,serial):
+	def __init__(self,axis=0, serial=""):
 		#self.KV_rad=28.27 #rad/Vs
 		self.vel_max=25000  # turn/s
 		self.current_max = 180 # Ampers
@@ -32,6 +32,8 @@ class Odrive_v54:
 			return 
 
 		self.motor = odrive.find_any(serial_number = serial)
+		if(axis==0):   self.m = motor.axis0
+		elif(axis==1): self.m = motor.axis1
 	#----------------------------------------------------------
 	# def setup_cpp(self,mode,calibration,axis,reduction,cpr,KV,version,serial):
 	# 	print("setup_cpp")
@@ -87,14 +89,11 @@ class Odrive_v54:
 	# 		#torque = abs(motor.axis0.motor.current_control.Iq_measured)
 	# 		#print('odrive setup was sucessful')
 	#----------------------------------------------------------
-	def setup(self,mode="pos",calibration=True,axis=0,reduction=1,cpr=8192,KV=150):
+	def setup(self,mode="pos",calibration=True, enc_calibration= False, reduction=1,cpr=8192,KV=150):
 		self.mode=mode
 		self.reduction=reduction
 		self.cpr=cpr
 		self.KV=KV #RPM/V
-
-		if(axis==0):   self.m = motor.axis0
-		elif(axis==1): self.m = motor.axis1
 
 		self.m.motor.config.current_lim = self.current_max
 
@@ -109,7 +108,7 @@ class Odrive_v54:
 			time.sleep(1)
 		while self.m.current_state != AXIS_STATE_IDLE:
 			time.sleep(0.1)
-		print("done calibration")
+		if(calibration): print("done calibration")
 
 		if(mode=="speed"):
 			print("Speed Controller Selected")
@@ -209,4 +208,6 @@ class Odrive_v54:
 	#----------------------------------------------------------------
 	def get_dbus_voltage(self):
 		return self.motor.vbus_voltage
-	
+	#----------------------------------------------------------------
+	def save_configuration(self):
+		self.motor.save_configuration()
